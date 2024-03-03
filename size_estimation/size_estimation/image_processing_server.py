@@ -19,7 +19,7 @@ class ImageServer(Node):
 
         # Create variables
         self.org_img = np.array((720, 1280, 3))
-        # self.depth_map = np.array((720, 1280, 1))
+        self.depth_map = np.array((480,640, 1))
         self.valid_img = False
         self.valid_depth = False 
         
@@ -56,7 +56,9 @@ class ImageServer(Node):
             return response
         self.get_logger().info("Message recived")
         id = request.id
-        segmented_img = self.segmentation(self.org_img)
+        rgb_image = self.org_img
+        depth_image = self.depth_map
+        segmented_img = self.segmentation(rgb_image)
         distance = self.distance_calc(segmented_img)
         response.data = 'The id is {}'.format(id)
         return response
@@ -84,6 +86,8 @@ class ImageServer(Node):
         mask = mask.astype('uint8')
         mask=cv2.fillPoly(mask,[maxContourData],1)
         return mask
+    def depth_mask(self,src,depth_map):
+        pass
     def distance_calc(self,src):
         pass
 
