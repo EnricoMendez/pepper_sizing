@@ -27,8 +27,8 @@ class ImageServer(Node):
         self.bridge = CvBridge()
 
         # Create suscriber 
-        self.camera_sub = self.create_subscription(Image,'camera/camera/color/image_raw', self.cam_callback, 10)
-        self.depth_sub = self.create_subscription(Image,'/camera/camera/depth/image_rect_raw', self.depth_callback, 10)
+        self.camera_sub = self.create_subscription(Image,'camera/color/image_raw', self.cam_callback, 10)
+        self.depth_sub = self.create_subscription(Image,'/camera/aligned_depth_to_color/image_raw', self.depth_callback, 10)
         # Create server
         self.srv = self.create_service(ImageProcessing, 'image_processing_service', self.image_process)
 
@@ -59,17 +59,18 @@ class ImageServer(Node):
         rgb_image = self.org_img
         depth_image = self.depth_map
         segmented_img = self.segmentation(rgb_image)
+        depth_mask = self.depth_mask(segmented_img,depth_image)
         distance = self.distance_calc(segmented_img)
         response.data = 'The id is {}'.format(id)
         return response
+    
     def segmentation(self,src):
         gray_img = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
         _, otsu = cv2.threshold(gray_img, 0,255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
         inverted_otsu = cv2.bitwise_not(otsu)
         mask = self.biggest_blob_selection(inverted_otsu)
-        self.image_deb_msg = self.bridge.cv2_to_imgmsg(mask*255)
-        self.image_deb_pub.publish(self.image_deb_msg)
-        return otsu
+        return mask
+    
     def biggest_blob_selection(self, src):
         contours,hierarchy = cv2.findContours(src, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
         maxContour = 0
@@ -86,8 +87,12 @@ class ImageServer(Node):
         mask = mask.astype('uint8')
         mask=cv2.fillPoly(mask,[maxContourData],1)
         return mask
+    
     def depth_mask(self,src,depth_map):
-        pass
+        result = cv2.bitwise_and(depth_map,depth_map,mask=src)
+        self.image_deb_msg = self.bridge.cv2_to_imgmsg(result)
+        self.image_deb_pub.publish(self.image_deb_msg)
+
     def distance_calc(self,src):
         pass
 
