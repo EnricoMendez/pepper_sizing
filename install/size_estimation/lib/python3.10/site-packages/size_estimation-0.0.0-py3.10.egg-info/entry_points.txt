@@ -1,0 +1,4 @@
+[console_scripts]
+data_adquisition = size_estimation.data_adquisition:main
+image_porcessing_server = size_estimation.image_processing_server:main
+

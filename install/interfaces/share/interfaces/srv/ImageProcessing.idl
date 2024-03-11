@@ -1,0 +1,15 @@
+// generated from rosidl_adapter/resource/srv.idl.em
+// with input from interfaces/srv/ImageProcessing.srv
+// generated code does not contain a copyright notice
+
+
+module interfaces {
+  module srv {
+    struct ImageProcessing_Request {
+      int64 id;
+    };
+    struct ImageProcessing_Response {
+      string data;
+    };
+  };
+};

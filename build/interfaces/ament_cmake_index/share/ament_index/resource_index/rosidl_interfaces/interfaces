@@ -1,0 +1,4 @@
+srv/ImageProcessing.idl
+srv/ImageProcessing.srv
+srv/ImageProcessing_Request.msg
+srv/ImageProcessing_Response.msg
