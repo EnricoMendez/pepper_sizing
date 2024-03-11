@@ -1,6 +1,6 @@
 # Author: Enrico Mendez
 # Date: 11 March 2024
-# Description: node to recieve images from realsense d435i 
+# Description: node to recieve images from realsense d435i and publish them in new topics each 4 seconds
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image, CameraInfo
@@ -59,4 +59,3 @@ def main(args=None):
 
 if __name__ == '__main__':
     main()
-    

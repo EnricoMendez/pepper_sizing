@@ -1,3 +1,0 @@
-[console_scripts]
-image_extractor = pepper_perception.image_extractor:main
-
